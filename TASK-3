@@ -1,0 +1,86 @@
+import requests
+
+# OpenWeatherMap API key
+API_KEY = "7a387891c7b9737314f8484357e00c40"
+
+# Function to get weather information using OpenWeatherMap API
+def get_weather(city):
+    try:
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
+        response = requests.get(url)
+        data = response.json()
+
+        if data["cod"] == 200:
+            main_data = data["main"]
+            weather_data = data["weather"][0]
+            temperature = main_data["temp"]
+            description = weather_data["description"]
+            return f"The temperature in {city} is {temperature}°C with {description}."
+        else:
+            return "Sorry, I couldn't fetch the weather data. Please try again."
+    except Exception as e:
+        return "Sorry, something went wrong while fetching the weather data."
+
+# Function to perform basic arithmetic calculations
+def calculator(expression):
+    try:
+        # Try evaluating the expression safely
+        result = eval(expression)
+        return f"The result of {expression} is {result}"
+    except Exception as e:
+        return "Sorry, there was an error with the calculation. Please enter a valid mathematical expression."
+
+# Function to classify intent based on user input
+def classify_intent(user_input):
+    # Check if the user is asking about the weather or performing calculations
+    if "weather" in user_input or "forecast" in user_input:
+        return "weather"
+    elif "calculate" in user_input or "math" in user_input or "add" in user_input or "subtract" in user_input or "multiply" in user_input or "divide" in user_input:
+        return "calculator"
+    elif "hello" in user_input or "hi" in user_input:
+        return "greeting"
+    elif "bye" in user_input or "goodbye" in user_input:
+        return "farewell"
+    else:
+        return "default"
+
+# Main function to run the chatbot
+def chatbot():
+    print("Chatbot: Hello! How can I assist you today? (Type 'exit' to quit)")
+
+    while True:
+        user_input = input("You: ").lower()
+
+        # Exit the loop if the user types 'exit'
+        if user_input == "exit":
+            print("Chatbot: Goodbye! Have a great day!")
+            break
+
+        # Check for weather queries
+        if "weather" in user_input or "forecast" in user_input:
+            if "in" in user_input:
+                city = user_input.split("in")[-1].strip()
+                weather_response = get_weather(city)
+                print(f"Chatbot: {weather_response}")
+            else:
+                print("Chatbot: Please specify a city (e.g., 'What's the weather in London?').")
+        
+        # Check for calculations
+        elif "calculate" in user_input or "math" in user_input:
+            print("Chatbot: " + calculator(user_input))
+        
+        # Check for greetings
+        elif "hello" in user_input or "hi" in user_input:
+            print("Chatbot: Hello! How can I assist you today?")
+        
+        # Handle farewells
+        elif "bye" in user_input or "goodbye" in user_input:
+            print("Chatbot: Goodbye! Have a great day!")
+            break
+        
+        # Default response
+        else:
+            print("Chatbot: I'm sorry, I didn't understand that. Could you rephrase?")
+
+# Run the chatbot
+chatbot()
